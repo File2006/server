@@ -60,3 +60,6 @@ server.on('upgrade', (request, socket, head) => {
     wss.emit('connection', ws, request);
   });
 });
+server.listen(port, () => {
+  console.log(`Server running on https://localhost:${port}`);
+});
