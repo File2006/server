@@ -7,9 +7,10 @@ const https = require('https');
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-
-const wss = new WebSocket.Server({ noServer: true });
 const server = https.createServer(app);
+
+const wss = new WebSocket.Server({ server });
+
 
 const clients = new Map();
 
