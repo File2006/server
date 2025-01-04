@@ -1,28 +1,35 @@
 #!/usr/bin/env node
-
 var app = require('../app');
-const WebSocket = require('ws');
 const https = require('https');
-const {WebSocketServer} = require("ws");
+const fs = require('fs');
+const http = require(('http'))
+const { WebSocketServer } = require("ws");
+
+const privateKey = fs.readFileSync('../env/private-key.pem', 'utf8');
+const certificate = fs.readFileSync('../env/server.crt', 'utf8');
+const passphrase = 'omeetly';
+
+const credentials = { key: privateKey, cert: certificate, passphrase: passphrase };
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-const server = https.createServer(app);
-const wss = new WebSocketServer({ server });
+const s = http.createServer(app);
 
-server.on('upgrade', (request, socket, head) => {
+s.listen(port, () => {
+  console.log(`Server running on https://localhost:${port}`);
+});
+
+const wss = new WebSocketServer({server:s});
+
+s.on('upgrade', (request, socket, head) => {
+  console.log('Handling WebSocket upgrade request...');
   wss.handleUpgrade(request, socket, head, (ws) => {
     wss.emit('connection', ws, request);
   });
 });
 
-server.listen(port, () => {
-  console.log(`Server running on https://localhost:${port}`);
-});
-
-const clients = new Map();
-
+// Log WebSocket connection attempts
 wss.on('connection', (ws) => {
   console.log('New WebSocket client connected');
 
@@ -33,6 +40,7 @@ wss.on('connection', (ws) => {
     console.log('Received message:', message);
     const data = JSON.parse(message);
 
+    // Broadcast message to all other connected clients
     wss.clients.forEach((client, id) => {
       if (id !== clientId && client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(data));
@@ -44,22 +52,25 @@ wss.on('connection', (ws) => {
     console.log('WebSocket client disconnected');
     clients.delete(clientId);
   });
+
+  // Log any errors
+  ws.on('error', (err) => {
+    console.log('WebSocket Error:', err);
+  });
 });
 
-/**
- * Normalize a port into a number, string, or false.
- */
 
+// Function to normalize port
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
-    // named pipe
+    // Named pipe
     return val;
   }
 
   if (port >= 0) {
-    // port number
+    // Port number
     return port;
   }
 
