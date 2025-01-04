@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-app.get('/', (req, res) => {
-    res.send('Hello from Express!');
+router.get('/', function(req, res, next) {
+    res.json({ message: 'Welcome to the Express API!' });
 });
 
 module.exports = router;
