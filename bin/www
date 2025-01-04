@@ -21,16 +21,9 @@ s.listen(port, () => {
   console.log(`Server running on https://localhost:${port}`);
 });
 
-const wss = new WebSocketServer({noServer: true});
+const wss = new WebSocketServer({server:s});
 
 const clients = new Map();
-
-s.on('upgrade', (request, socket, head) => {
-  console.log('Handling WebSocket upgrade request...');
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
-  });
-});
 
 // Log WebSocket connection attempts
 wss.on('connection', (ws) => {
