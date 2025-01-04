@@ -13,11 +13,7 @@ s.listen(port, () => {
   console.log(`Server running on https://localhost:${port}`);
 });
 
-try {
-  const wss = new WebSocketServer({server:s});
-  } catch (error){
-  console.log("Boom")
-}
+const wss = new WebSocketServer({server:s});
 
 console.log(`WSS running on https://localhost:${s}`);
 
