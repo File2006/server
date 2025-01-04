@@ -3,6 +3,7 @@ var app = require('../app');
 const https = require('https');
 const fs = require('fs');
 const http = require(('http'))
+const WebSocket = require('ws');
 const { WebSocketServer } = require("ws");
 
 const privateKey = fs.readFileSync('../env/private-key.pem', 'utf8');
@@ -20,7 +21,9 @@ s.listen(port, () => {
   console.log(`Server running on https://localhost:${port}`);
 });
 
-const wss = new WebSocketServer({server:s});
+const wss = new WebSocketServer({noServer: true});
+
+const clients = new Map();
 
 s.on('upgrade', (request, socket, head) => {
   console.log('Handling WebSocket upgrade request...');
@@ -37,8 +40,10 @@ wss.on('connection', (ws) => {
   clients.set(clientId, ws);
 
   ws.on('message', (message) => {
-    console.log('Received message:', message);
-    const data = JSON.parse(message);
+    const messageString = message instanceof Buffer ? message.toString() : message;
+
+    console.log('Received server message:', messageString);
+    const data = JSON.parse(messageString);
 
     // Broadcast message to all other connected clients
     wss.clients.forEach((client, id) => {
