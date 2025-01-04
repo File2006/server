@@ -55,11 +55,7 @@ function normalizePort(val) {
 
   return false;
 }
-server.on('upgrade', (request, socket, head) => {
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
-  });
-});
+
 server.listen(port, () => {
   console.log(`Server running on https://localhost:${port}`);
 });
