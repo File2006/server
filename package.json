@@ -10,9 +10,14 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "5.0.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
+    "peer": "^1.0.2",
+    "peerjs": "^1.5.4",
     "pug": "3.0.3",
+    "serve-favicon": "^2.5.0",
     "ws": "^8.18.0"
   }
 }

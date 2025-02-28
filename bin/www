@@ -1,60 +1,22 @@
 #!/usr/bin/env node
-var app = require('../app');
-const https = require('https');
-const WebSocket = require('ws');
-const { WebSocketServer } = require("ws");
-
-var port = normalizePort(process.env.PORT || '3000');
+const app = require('../app');
+const http = require('http');
+const port = normalizePort(process.env.PORT || '9000')
 app.set('port', port);
+const ExpressPeerServer = require('peer').ExpressPeerServer;
+const options = {
+  debug: true
+}
+const server = http.createServer(app);
+app.use('/peerjs', ExpressPeerServer(server, options));
 
-const s = https.createServer(app);
-
-s.listen(port, () => {
-  console.log(`Server running on https://localhost:${port}`);
-});
-
-const wss = new WebSocketServer({server:s});
-
-console.log(`WSS running on https://localhost:${s}`);
-
-const clients = new Map();
-
-// Log WebSocket connection attempts
-wss.on('connection', (ws) => {
-  console.log('New WebSocket client connected');
-
-  const clientId = Date.now();
-  clients.set(clientId, ws);
-
-  ws.on('message', (message) => {
-    const messageString = message instanceof Buffer ? message.toString() : message;
-
-    console.log('Received server message:', messageString);
-    const data = JSON.parse(messageString);
-
-    // Broadcast message to all other connected clients
-    wss.clients.forEach((client, id) => {
-      if (id !== clientId && client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(data));
-      }
-    });
-  });
-
-  ws.on('close', () => {
-    console.log('WebSocket client disconnected');
-    clients.delete(clientId);
-  });
-
-  // Log any errors
-  ws.on('error', (err) => {
-    console.log('WebSocket Error:', err);
-  });
+server.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
 
 
-// Function to normalize port
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // Named pipe
@@ -65,6 +27,11 @@ function normalizePort(val) {
     // Port number
     return port;
   }
-
   return false;
 }
+
+process.on('SIGTERM', () => {
+  server.close(() => {
+    console.log('Process terminated');
+  });
+});
