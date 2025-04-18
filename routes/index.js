@@ -1,14 +1,18 @@
 const express = require('express');
 const router = express.Router();
-let idList = [];
+let peers = [];
 
 router.post('/registerPeer', (req, res) => {
-    const { peerID } = req.body;
-    if (!peerID) {
+    const { peerID, role } = req.body;
+    if (!peerID || !role) {
         return res.status(400).json({ error: 'Peer ID is required' });
     }
-    idList.push(peerID);
-    console.log(`Peer ID ${peerID} registered. Current list of peers:`, idList);
+    const exists = peers.some(peer => peer.peerID === peerID);
+    if (exists) {
+        return res.status(409).json({ error: 'Peer ID already registered' });
+    }
+    peers.push({peerID, role});
+    console.log(`Peer ID ${peerID} registered. Current list of peers:`, peers);
 
     res.json({ message: 'Peer registered successfully' });
 });
@@ -17,14 +21,14 @@ router.post('/destroyPeer', (req, res) => {
     if (!peerID) {
         return res.status(400).json({ error: 'Peer ID is required' });
     }
-    idList = idList.filter(id => id !== peerID)
-    console.log(`Peer ID ${peerID} destroyed. Current list of peers:`, idList);
+    peers = peers.filter(peer => peer.peerID !== peerID)
+    console.log(`Peer ID ${peerID} destroyed. Current list of peers:`, peers);
 
     res.json({ message: 'Peer destroyed successfully' });
 });
 
 router.get('/getPeers', (req, res) => {
-    res.json({ idList });
+    res.json({ peers });
 });
 
 module.exports = router;
