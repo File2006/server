@@ -10,7 +10,7 @@ router.post('/registerPeer', (req, res) => {
     const existingPeer = peers.find(peer => peer.peerID === peerID);
 
     if (existingPeer) {
-        if (peerID === "StopIdle") {
+        if (role === "StopIdle") {
             existingPeer.role = "stopIdle";
             return res.status(410).json({error: "Changed role to StopIdle"});
         }
@@ -31,7 +31,6 @@ router.post('/destroyPeer', (req, res) => {
 
     res.json({ message: 'Peer destroyed successfully' });
 });
-
 router.get('/getPeers', (req, res) => {
         res.json({ peers });
 });
