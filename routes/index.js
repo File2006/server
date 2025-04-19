@@ -41,8 +41,8 @@ router.get('/getPeers', (req, res) => {
     res.json({ peers: simplifiedPeers });
 });
 router.post('/updatePeerRole', (req, res) => {
-    const { peerID, newRole } = req.body;
-    if (!peerID || !newRole) {
+    const { peerID, role } = req.body;
+    if (!peerID || !role) {
         return res.status(400).json({ error: 'Peer ID and new role are required' });
     }
 
@@ -52,10 +52,10 @@ router.post('/updatePeerRole', (req, res) => {
         return res.status(404).json({ error: 'Peer not found' });
     }
 
-    peer.role = newRole;
-    console.log(`Peer ID ${peerID} role updated to ${newRole}. Current list of peers:`, peers);
+    peer.role = role;
+    console.log(`Peer ID ${peerID} role updated to ${role}. Current list of peers:`, peers);
 
-    res.json({ message: `Peer ID ${peerID} role updated to ${newRole} successfully` });
+    res.json({ message: `Peer ID ${peerID} role updated to ${role} successfully` });
 });
 
 router.post('/getDistance', (req, res) => {
