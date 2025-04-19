@@ -40,19 +40,32 @@ router.get('/getPeers', (req, res) => {
     }));
     res.json({ peers: simplifiedPeers });
 });
+router.post('/updatePeerRole', (req, res) => {
+    const { peerID, newRole } = req.body;
+    if (!peerID || !newRole) {
+        return res.status(400).json({ error: 'Peer ID and new role are required' });
+    }
+
+    const peer = peers.find(peer => peer.peerID === peerID);
+
+    if (!peer) {
+        return res.status(404).json({ error: 'Peer not found' });
+    }
+
+    peer.role = newRole;
+    console.log(`Peer ID ${peerID} role updated to ${newRole}. Current list of peers:`, peers);
+
+    res.json({ message: `Peer ID ${peerID} role updated to ${newRole} successfully` });
+});
 
 router.post('/getDistance', (req, res) => {
     const { callerID, destID } = req.body;
-
     const myData = peers.find(peer => peer.peerID === callerID);
     const otherData = peers.find(peer => peer.peerID === destID);
-
     if (!myData || !otherData) {
         return res.status(404).json({ error: 'One or both peers not found' });
     }
-    console.log(myData.latitude, myData.longitude, otherData.latitude, otherData.longitude);
     const distance = getDistance(myData.latitude, myData.longitude, otherData.latitude, otherData.longitude);
-    console.log(distance);
     res.json({ distance });
 });
 
