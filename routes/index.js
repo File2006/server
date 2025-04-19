@@ -32,9 +32,7 @@ router.post('/destroyPeer', (req, res) => {
 });
 
 router.get('/getPeers', (req, res) => {
-    router.get('/getPeers', (req, res) => {
         res.json({ peers });
-    });
 });
 
 module.exports = router;
