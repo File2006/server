@@ -21,6 +21,7 @@ router.post('/registerPeer', (req, res) => {
 
     res.json({ message: 'Peer registered successfully' });
 });
+
 router.post('/destroyPeer', (req, res) => {
     const { peerID } = req.body;
     if (!peerID) {
@@ -31,6 +32,7 @@ router.post('/destroyPeer', (req, res) => {
 
     res.json({ message: 'Peer destroyed successfully' });
 });
+
 router.get('/getPeers', (req, res) => {
     const simplifiedPeers = peers.map(peer => ({
         peerID: peer.peerID,
@@ -38,6 +40,7 @@ router.get('/getPeers', (req, res) => {
     }));
     res.json({ peers: simplifiedPeers });
 });
+
 router.post('/getDistance', (req, res) => {
     const { callerID, destID } = req.body;
 
@@ -47,8 +50,9 @@ router.post('/getDistance', (req, res) => {
     if (!myData || !otherData) {
         return res.status(404).json({ error: 'One or both peers not found' });
     }
-
+    console.log(myData.latitude, myData.longitude, otherData.latitude, otherData.longitude);
     const distance = getDistance(myData.latitude, myData.longitude, otherData.latitude, otherData.longitude);
+    console.log(distance);
     res.json({ distance });
 });
 
