@@ -32,11 +32,9 @@ router.post('/destroyPeer', (req, res) => {
 });
 
 router.get('/getPeers', (req, res) => {
-    const filteredPeers = peers.map(peer => ({
-        peerID: peer.peerID,
-        role: peer.role
-    }));
-    res.json({ peers: filteredPeers });
+    router.get('/getPeers', (req, res) => {
+        res.json({ peers });
+    });
 });
 
 module.exports = router;
