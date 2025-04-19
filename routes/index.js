@@ -43,10 +43,10 @@ router.get('/getPeers', (req, res) => {
 
 router.post('/getDistance', (req, res) => {
     const { callerID, destID } = req.body;
-
+    console.log(callerID, destID);
     const myData = peers.find(peer => peer.peerID === callerID);
     const otherData = peers.find(peer => peer.peerID === destID);
-
+    console.log(myData, otherData);
     if (!myData || !otherData) {
         return res.status(404).json({ error: 'One or both peers not found' });
     }
