@@ -7,8 +7,12 @@ router.post('/registerPeer', (req, res) => {
     if (!peerID || !role) {
         return res.status(400).json({ error: 'Peer ID is required' });
     }
-    const exists = peers.some(peer => peer.peerID === peerID);
-    if (exists) {
+    const existingPeer = peers.find(peer => peer.peerID === peerID);
+
+    if (existingPeer) {
+        if (peerID === "StopIdle") {
+            existingPeer.role = "stopIdle";
+        }
         return res.status(409).json({ error: 'Peer ID already registered' });
     }
     peers.push({peerID, longitude, latitude, role});
@@ -28,7 +32,11 @@ router.post('/destroyPeer', (req, res) => {
 });
 
 router.get('/getPeers', (req, res) => {
-    res.json({ peers });
+    const filteredPeers = peers.map(peer => ({
+        peerID: peer.peerID,
+        role: peer.role
+    }));
+    res.json({ peers: filteredPeers });
 });
 
 module.exports = router;
