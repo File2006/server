@@ -38,7 +38,7 @@ router.get('/getPeers', (req, res) => {
     }));
     res.json({ peers: simplifiedPeers });
 });
-app.post('/api/getDistance', (req, res) => {
+router.post('/api/getDistance', (req, res) => {
     const { myID, otherID } = req.body;
 
     const myData = peers.get(myID);
