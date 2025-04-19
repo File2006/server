@@ -10,9 +10,9 @@ router.post('/registerPeer', (req, res) => {
     const existingPeer = peers.find(peer => peer.peerID === peerID);
 
     if (existingPeer) {
-        if (role === "StopIdle") {
+        if (role === "stopIdle") {
             existingPeer.role = "stopIdle";
-            return res.status(410).json({error: "Changed role to StopIdle"});
+            return res.status(410).json({error: "Changed role to stopIdle"});
         }
         return res.status(409).json({ error: 'Peer ID already registered' });
     }
