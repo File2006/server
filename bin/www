@@ -1,33 +1,23 @@
-#!/usr/bin/env node
 const app = require('../app');
 const http = require('http');
 const port = normalizePort(process.env.PORT || '9000')
-app.set('port', port);
-
 const ExpressPeerServer = require('peer').ExpressPeerServer;
-
 const options = {
   debug: true,
   path: "/omeetly",
 }
 const server = http.createServer(app);
 
+app.set('port', port);
 app.use('/peerjs', ExpressPeerServer(server, options));
-server.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
-
+server.listen(port);
 
 function normalizePort(val) {
   const port = parseInt(val, 10);
-
   if (isNaN(port)) {
-    // Named pipe
     return val;
   }
-
   if (port >= 0) {
-    // Port number
     return port;
   }
   return false;
