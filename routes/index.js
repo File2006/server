@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 let peers = [];
 
+// Endpoint pro registraci nového peeru
 router.post('/registerPeer', (req, res) => {
     const { peerID, longitude, latitude, role} = req.body;
     if (!peerID || !role) {
@@ -17,6 +18,7 @@ router.post('/registerPeer', (req, res) => {
     res.json({ message: 'Peer registered successfully' });
 });
 
+// Endpoint pro odstranění peeru
 router.post('/destroyPeer', (req, res) => {
     const { peerID } = req.body;
     if (!peerID) {
@@ -28,6 +30,7 @@ router.post('/destroyPeer', (req, res) => {
     res.json({ message: 'Peer destroyed successfully' });
 });
 
+// Endpoint pro získání seznamu peerů
 router.get('/getPeers', (req, res) => {
     const simplifiedPeers = peers.map(peer => ({
         peerID: peer.peerID,
@@ -35,6 +38,8 @@ router.get('/getPeers', (req, res) => {
     }));
     res.json({ peers: simplifiedPeers });
 });
+
+// Endpoint pro aktualizaci role peeru
 router.post('/updatePeerRole', (req, res) => {
     const { peerID, role } = req.body;
     if (!peerID || !role) {
@@ -53,6 +58,7 @@ router.post('/updatePeerRole', (req, res) => {
     res.json({ message: `Peer ID ${peerID} role updated to ${role} successfully` });
 });
 
+// Endpoint pro výpočet vzdálenosti mezi dvěma peery
 router.post('/getDistance', (req, res) => {
     const { callerID, destID } = req.body;
 
@@ -68,8 +74,9 @@ router.post('/getDistance', (req, res) => {
     res.json({ distance });
 });
 
+// Funkce pro výpočet vzdálenosti mezi dvěma body na základě zeměpisných souřadnic (Harvesinův vzorec)
 function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Earth radius in km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a =
